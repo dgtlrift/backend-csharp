@@ -7,13 +7,12 @@
 ///     tests/RoundtripTests.cs ← xUnit roundtrip tests
 
 use cddlc_codegen::{
-    capacity_value, constraint_to_rust_check,
     to_pascal_case, to_snake_case,
     Backend, CodegenError, CodegenOptions, CodegenOutput, GeneratedFile,
     IndentWriter,
 };
 use cddlc_ir::{
-    AliasDef, ArrayDef, Capacity, CborTag, Constraint, EnumDef,
+    AliasDef, ArrayDef, Constraint, EnumDef,
     IrModule, LiteralValue, Occurrence, Primitive, StructDef, TypeDef, TypeRef,
 };
 
@@ -270,7 +269,7 @@ fn emit_struct_decode(w: &mut IndentWriter, s: &StructDef, opts: &CodegenOptions
 
 // ── Enum (sealed class hierarchy) ─────────────────────────────────────────────
 
-fn emit_enum(w: &mut IndentWriter, e: &EnumDef, opts: &CodegenOptions) {
+fn emit_enum(w: &mut IndentWriter, e: &EnumDef, _opts: &CodegenOptions) {
     emit_doc_comment(w, e.doc.as_deref());
     if e.deprecated { w.line("[Obsolete]"); }
 
@@ -931,7 +930,7 @@ fn emit_struct_tests(w: &mut IndentWriter, s: &StructDef, opts: &CodegenOptions)
     if let Some(tag) = s.tagged {
         w.blank();
         w.line("[Fact]");
-        w.line(&format!("public void {test_pfx}_Encode_HasTag_{tag}()"));
+        w.line(&format!("public void {test_pfx}_Encode_HasTag_{}()", tag.0));
         w.line("{");
         w.indent();
         w.line(&format!("var obj = new {type_name}();"));
@@ -1020,7 +1019,7 @@ fn emit_alias_tests(w: &mut IndentWriter, a: &AliasDef, opts: &CodegenOptions) {
     }
 }
 
-fn emit_array_tests(w: &mut IndentWriter, a: &ArrayDef, opts: &CodegenOptions) {
+fn emit_array_tests(w: &mut IndentWriter, a: &ArrayDef, _opts: &CodegenOptions) {
     let type_name = to_pascal_case(&a.name);
 
     w.line("[Fact]");
